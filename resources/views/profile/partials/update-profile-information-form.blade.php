@@ -28,6 +28,8 @@
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
+
+
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
                     <p class="text-sm mt-2 text-gray-800">
@@ -45,6 +47,12 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="phone" value="{{ __('Phone') }}" />
+            <x-text-input id="phone" class="block mt-1 w-full" type="number" name="phone" :value="old('phone', $user->phone)" autocomplete="tel" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
         <div class="flex items-center gap-4">
