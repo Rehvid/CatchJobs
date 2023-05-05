@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 
 class CompanyController extends Controller
@@ -15,8 +18,16 @@ class CompanyController extends Controller
     {
     }
 
-    public function list()
+    public function list(): View
     {
+        $user = Auth::user();
+
+        $companies = Company::when(
+                !$user->isAdmin(), fn($query) => $query->byUser($user->id)
+            )
+            ->simplePaginate();
+
+        return view('company.list', ['companies' => $companies]);
     }
 
     /**
