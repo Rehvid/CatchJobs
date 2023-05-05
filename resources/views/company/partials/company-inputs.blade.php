@@ -90,8 +90,9 @@
 
     <x-input-label for="industry" :value="__('company.industry.label')" optional="true" />
     <x-text-input
+        data-url="{{ route('industries') }}"
         id="industry"
-        class="block mt-1 w-full js-industry"
+        class="block mt-1 w-full js-industry js-arrow"
         data-max-items="1"
         type="text"
         name="industry"

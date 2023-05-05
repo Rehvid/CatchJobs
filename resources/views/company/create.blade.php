@@ -16,4 +16,6 @@
 
         </div>
     </div>
+    @vite('resources/js/company.js')
+    @vite('resources/css/tagify.css')
 </x-app-layout>
