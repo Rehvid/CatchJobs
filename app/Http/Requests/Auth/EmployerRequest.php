@@ -23,7 +23,7 @@ class EmployerRequest extends FormRequest
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => ['required','numeric', 'min_digits:9', 'max_digits:15', 'unique:'.User::class],
             'company_name' => ['required', 'string', 'min:2', 'max:255'],
-            'vat_number' => ['required', 'integer', 'digits:10'],
+            'vat_number' => ['required', 'string', 'size:10'],
         ];
     }
 }
