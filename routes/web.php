@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\ProfileController;
@@ -30,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/industries', IndustryController::class)->name('industries');
+    Route::get('/benefits', BenefitController::class)->name('benefits');
+
     Route::get('/companies/list', [CompanyController::class, 'list'])->name('companies.list');
     Route::resource('companies', CompanyController::class);
 });
