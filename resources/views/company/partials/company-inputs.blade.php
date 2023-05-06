@@ -38,7 +38,7 @@
 
 <div class="w-full px-4 mb-8">
     <x-input-label  for="description" :value="__('company.description.label')" optional="true" />
-    <textarea id="description" name="description">{{ old('description', $company->description ?? '') }}</textarea>
+    <textarea class="js-textarea" id="description" name="description">{{ old('description', $company->description ?? '') }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-1" />
 </div>
 

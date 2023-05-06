@@ -1,8 +1,10 @@
 'use strict'
 
 import Tagify from '@yaireo/tagify'
+
 import "@yaireo/tagify/dist/tagify.css";
-import {getDataFromServer} from "./app";
+import { createCKEditorForTextarea, getDataFromServer} from "./app";
+
 
 class Company {
     constructor() {
@@ -10,6 +12,7 @@ class Company {
     }
     init() {
         this.createTagifyForIndustryInput();
+        this.initCKEditorForDescriptionField();
     }
 
     async createTagifyForIndustryInput() {
@@ -33,11 +36,14 @@ class Company {
                 whitelist:industries,
             })
         })
-
     }
 
     isInputValidForTagify(input) {
         return input !== false && input.hasAttribute('data-url');
+    }
+
+    initCKEditorForDescriptionField() {
+        createCKEditorForTextarea(document.querySelector('.js-textarea'));
     }
 }
 

@@ -1,6 +1,8 @@
 import './bootstrap';
 import 'flowbite';
 import Alpine from 'alpinejs';
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import "@ckeditor/ckeditor5-build-classic/build/translations/pl.js";
 
 window.Alpine = Alpine;
 
@@ -28,4 +30,31 @@ export function getDataFromServer(url) {
         method: 'get',
         credentials: "same-origin",
     })
+}
+
+export function createCKEditorForTextarea(element) {
+    if (!element) {
+        return console.error('Element is not valid');
+    }
+
+    ClassicEditor.create(element, {
+        toolbar: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "outdent",
+            "indent",
+            "|",
+            "blockQuote",
+            "insertTable",
+            "mediaEmbed",
+            "undo",
+            "redo"
+        ],
+        language: 'pl'
+    });
 }
