@@ -76,8 +76,9 @@
 <div class="w-full px-4 mb-8">
     <x-input-label  for="benefits" :value="__('company.benefits.label')" optional="true" />
     <x-text-input
+        data-url="{{ route('benefits') }}"
         id="benefits"
-        class="block mt-1 w-full js-benefit"
+        class="block mt-1 w-full js-benefit js-arrow"
         type="text"
         name="benefits"
         value="{{ isset($company) === true ? implode(',', $company->benefits->pluck('name')->toArray()) : '' }}"

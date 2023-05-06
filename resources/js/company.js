@@ -12,6 +12,7 @@ class Company {
     }
     init() {
         this.createTagifyForIndustryInput();
+        this.createTagifyForBenefitInput();
         this.initCKEditorForDescriptionField();
     }
 
@@ -34,6 +35,28 @@ class Company {
                 },
                 enforceWhiteList: true,
                 whitelist:industries,
+            })
+        })
+    }
+
+    async createTagifyForBenefitInput() {
+        const benefitInput = document.querySelector('.js-benefit') || false;
+        if (!this.isInputValidForTagify(benefitInput)) {
+            return false;
+        }
+
+        const url = benefitInput.getAttribute('data-url');
+        const benefitsData = await getDataFromServer(url);
+
+        benefitsData.json().then(benefits => {
+            new Tagify(benefitInput, {
+                dropdown: {
+                    enabled: 0,
+                    classname: "tags-look",
+                    maxItems: 10,
+                },
+                enforceWhiteList: true,
+                whitelist:benefits,
             })
         })
     }
