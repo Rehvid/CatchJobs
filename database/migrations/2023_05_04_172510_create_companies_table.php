@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('industry_id')->nullable();
             $table->string('name')->unique();
             $table->string('slug')->unique();
-            $table->unsignedInteger('vat_number')->unique();
+            $table->unsignedBigInteger('vat_number')->unique();
             $table->unsignedInteger('status')->default(0);
             $table->text('description')->nullable();
             $table->string('employees')->nullable();
