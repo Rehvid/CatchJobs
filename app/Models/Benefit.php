@@ -10,4 +10,9 @@ class Benefit extends Model
 {
     use HasFactory;
     public $timestamps = false;
+
+    public function scopeByName($query, $value)
+    {
+        return $query->where('name', $value);
+    }
 }

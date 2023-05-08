@@ -13,4 +13,9 @@ class Industry extends Model
 
     protected $fillable = ['name'];
 
+    public function scopeFindByName($query, $value)
+    {
+        return $query->where('name', $value);
+    }
+
 }
