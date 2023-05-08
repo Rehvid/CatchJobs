@@ -29,8 +29,12 @@ return [
         'label' => 'Benefity',
         'placeholder' => '',
     ],
-    'status' => 'Status',
 
+    'success' => [
+        'store' => 'Udało ci się utworzyć firme'
+    ],
+
+    'status' => 'Status',
     'show' => 'Zobacz firme',
     'edit' => 'Edytuj firme',
     'remove' => 'Usuń firme',

@@ -9,7 +9,7 @@
                 </div>
 
                 <div class="flex items-center gap-4 px-4">
-                    <x-primary-button class="w-full bordered-full">{{ __('Save') }}</x-primary-button>
+                    <x-primary-button class="w-full bordered-full">{{ __('company.create') }}</x-primary-button>
                 </div>
             </form>
 

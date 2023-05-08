@@ -7,4 +7,5 @@ return [
         'accept' => 'Zaakceptowane'
     ],
     'actions' => 'Akcje',
+    'optional' => '(Opcjonalne)'
 ];
