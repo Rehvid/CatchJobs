@@ -8,6 +8,11 @@
         </div>
     </x-slot>
 
+    @if(session()->has('success'))
+        <x-toast-notification type="success" :message="session()->get('success')" />
+    @endif
+
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="mt-6 flex flex-wrap mb-6 p-4 sm:p-4 bg-white shadow sm:rounded-lg">
@@ -50,7 +55,7 @@
                                         <x-status-badge status="{{ $company->status }}"/>
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $company->industry_id }}
+                                        {{ $company->industry?->name }}
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex">
