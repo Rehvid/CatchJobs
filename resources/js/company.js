@@ -14,6 +14,20 @@ class Company {
         this.createTagifyForIndustryInput();
         this.createTagifyForBenefitInput();
         this.initCKEditorForDescriptionField();
+        this.selectOldValueEmployeesOption()
+    }
+
+    selectOldValueEmployeesOption() {
+        const oldValueEmployees = document.querySelector('.old_employees');
+        const selectEmployees = document.querySelector('#employees');
+
+        if (!oldValueEmployees || !selectEmployees) {
+            return false;
+        }
+
+        if (oldValueEmployees.value) {
+            selectEmployees.value = oldValueEmployees.value;
+        }
     }
 
     async createTagifyForIndustryInput() {
@@ -27,6 +41,7 @@ class Company {
 
         industriesData.json().then(industries => {
             new Tagify(industryInput, {
+                originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
                 maxTags: 1,
                 dropdown: {
                     enabled: 0,
