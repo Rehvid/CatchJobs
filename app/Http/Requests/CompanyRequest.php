@@ -4,12 +4,25 @@ namespace App\Http\Requests;
 
 use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use JsonException;
 
 class CompanyRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        if ($this->routeIs('companies.store')) {
+            return $this->user()->can('create', Company::class);
+        }
+
+        if ($this->routeIs('companies.update')) {
+            return $this->user()->can('update', Company::class);
+        }
+
+        return false;
+    }
 
     public function rules(): array
     {

@@ -23,6 +23,8 @@ class CompanyController extends Controller
 
     public function list(): View
     {
+        $this->authorize('viewAny', Company::class);
+
         $user = Auth::user();
 
         $companies = Company::when(
@@ -35,11 +37,15 @@ class CompanyController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', Company::class);
+
         return view('company.create');
     }
 
     public function store(CompanyRequest $request): RedirectResponse
     {
+        $this->authorize('create', Company::class);
+
         $this->companyService->storeCompany($request->validated());
 
         return redirect()->route('companies.list')->with('success', __('company.success.store'));
