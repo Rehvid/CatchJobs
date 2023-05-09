@@ -42,8 +42,10 @@
     <x-input-error :messages="$errors->get('description')" class="mt-1" />
 </div>
 
+
 <div class="w-full px-4 mb-8">
     <x-input-label for="employees" :value="__('company.employees.label')" optional="true" />
+    <input type="hidden" class="old_employees" value="{{old('employees')}}">
     <x-select name="employees" id="employees">
         <option>1 - 5</option>
         <option>5 - 10</option>
@@ -72,7 +74,6 @@
     <x-input-error :messages="$errors->get('foundation_year')" class="mt-1" />
 </div>
 
-
 <div class="w-full px-4 mb-8">
     <x-input-label  for="benefits" :value="__('company.benefits.label')" optional="true" />
     <x-text-input
@@ -81,10 +82,15 @@
         class="block mt-1 w-full js-benefit js-arrow"
         type="text"
         name="benefits"
-        value="{{ isset($company) === true ? implode(',', $company->benefits->pluck('name')->toArray()) : '' }}"
+        value="{{ old('benefits') }}"
         autocomplete="off"
     />
     <x-input-error :messages="$errors->get('benefits')" class="mt-1" />
+    @foreach($errors->all() as $key => $error)
+        @if(Str::contains($error, 'benefit'))
+            <x-input-error :messages="$error" class="mt-1" />
+        @endif
+    @endforeach
 </div>
 
 <div class="w-full px-4 mb-8">
