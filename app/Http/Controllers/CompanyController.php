@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
+use App\Services\CompanyService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -11,9 +14,9 @@ use Illuminate\View\View;
 
 class CompanyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function __construct(private readonly CompanyService $companyService){}
+
     public function index()
     {
     }
@@ -30,49 +33,33 @@ class CompanyController extends Controller
         return view('company.list', ['companies' => $companies]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): View
     {
         return view('company.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CompanyRequest $request): RedirectResponse
     {
-        //
+        $this->companyService->storeCompany($request->validated());
+
+        return redirect()->route('companies.list')->with('success', __('company.success.store'));
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
