@@ -31,9 +31,6 @@ class UserFactory extends Factory
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -41,12 +38,4 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function configure(): UserFactory
-    {
-        return $this->afterCreating(function (User $user) {
-            $user->phone === null
-                ? $user->assignRole(AuthRole::USER->value)
-                : $user->assignRole(AuthRole::EMPLOYER->value);
-        });
-    }
 }
