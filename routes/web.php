@@ -3,6 +3,7 @@
 use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\IndustryController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/companies/list', [CompanyController::class, 'list'])->name('companies.list');
     Route::resource('companies', CompanyController::class);
+
+    Route::resource('locations', LocationController::class);
+    Route::get('/location/{id}', [LocationController::class, 'get'])->name('locations.get');
 });
 
 require __DIR__.'/auth.php';
