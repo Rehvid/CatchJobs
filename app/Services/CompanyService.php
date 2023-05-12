@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Models\Benefit;
 use App\Models\Company;
 use App\Models\Industry;
+use App\Models\Location;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -34,12 +35,27 @@ class CompanyService
         if ($this->companyCollection->get('industry')) {
             $this->transformIndustryForCompanyCollection();
         }
+
+        if ($this->companyCollection->get('location_id') === 0) {
+            $this->companyCollection->put('location_id', $this->createLocationForCompany()->id);
+        }
+
     }
 
     private function putDataToCompanyCollection(): void
     {
         $this->companyCollection->put('user_id', Auth::user()->id);
         $this->companyCollection->put('slug', Str::slug($this->companyCollection->get('name')));
+        if (isset($this->company) && !$this->isSubmittedLocationEqualToCompanyLocation()) {
+            $this->company->location_id = $this->companyCollection->get('location_id');
+            $this->updateLocationForCompany();
+        }
+    }
+
+    private function isSubmittedLocationEqualToCompanyLocation(): bool
+    {
+        return !is_null($this->company->location_id)
+            && $this->company->location_id === $this->companyCollection->get('location_id');
     }
 
     private function transformBenefitsForCompanyCollection(): void
@@ -74,5 +90,15 @@ class CompanyService
     private function syncBenefitsForCompany(): void
     {
        $this->company->benefits()->sync($this->companyCollection->get('benefits'));
+    }
+
+    private function createLocationForCompany(): Location
+    {
+        return Location::create($this->companyCollection->toArray());
+    }
+
+    private function updateLocationForCompany(): void
+    {
+        $this->company->location?->update($this->companyCollection->all());
     }
 }
