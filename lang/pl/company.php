@@ -2,6 +2,7 @@
 return [
     'list_title' => 'Firmy',
     'create_title' => 'Podstawowe informacje o twojej firmie',
+    'location_title' => 'Informacje o lokalizacji twojej firmy',
     'name' => [
         'label' => 'Nazwa firmy',
         'placeholder' => 'XyzCorp48'
