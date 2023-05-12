@@ -3,11 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Models\Company;
+use App\Models\Location;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use JsonException;
+use function PHPUnit\Framework\isNull;
 
 class CompanyRequest extends FormRequest
 {
@@ -34,7 +37,31 @@ class CompanyRequest extends FormRequest
             'foundation_year' => ['nullable', 'integer', 'digits:4', 'gt:0'],
             'benefits' => ['nullable', 'array'],
             'benefits.*.value' => ['required','string', 'min:2','max:255'],
-            'industry' => ['nullable', 'string', 'min:2', 'max:255']
+            'industry' => ['nullable', 'string', 'min:2', 'max:255'],
+            'location_id' => ['nullable','integer','min:0'],
+            'alias' => ['sometimes', 'nullable', 'string', 'min:2', 'max:255'],
+            'postcode' => ['sometimes', 'required', 'string', 'regex:/^[0-9]{2}-[0-9]{3}/', 'size:6'],
+            'province' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
+            'city' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
+            'street' => ['sometimes', 'required', 'string', 'min:2', 'max:255', 'regex:/^[a-zA-Z0-9\s\/-]+$/'],
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                'min:2',
+                'max:255',
+                Rule::unique('locations')
+                    ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
+            ],
+            'phone' => [
+                'sometimes',
+                'required',
+                'numeric',
+                'min_digits:9',
+                'max_digits:15',
+                Rule::unique('locations')
+                    ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
+            ]
         ];
     }
 
@@ -57,5 +84,12 @@ class CompanyRequest extends FormRequest
                 throw ValidationException::withMessages(['benefits' => __('validation.wrong_syntax')]);
             }
          }
+
+        if (!is_null($this->location_id)) {
+            $this->merge([
+                'location_id' => (int) $this->location_id
+            ]);
+        }
+
     }
 }
