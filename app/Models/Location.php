@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Location extends Model
 {
@@ -27,4 +29,9 @@ class Location extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function scopeByUser(Builder $query): Builder
+    {
+        return $query->where('user_id', Auth::user()->id);
+    }
 }
