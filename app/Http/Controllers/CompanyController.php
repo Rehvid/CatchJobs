@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
+use App\Models\Location;
 use App\Services\CompanyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,8 +39,13 @@ class CompanyController extends Controller
     public function create(): View
     {
         $this->authorize('create', Company::class);
+        $user = Auth::user();
 
-        return view('company.create');
+        $locations = Location::when(
+            !$user->isAdmin(), fn($query) => $query->byUser()
+        )->get();
+
+        return view('company.create', compact('locations'));
     }
 
     public function store(CompanyRequest $request): RedirectResponse
