@@ -61,7 +61,12 @@ class CompanyRequest extends FormRequest
                 'max_digits:15',
                 Rule::unique('locations')
                     ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
-            ]
+            ],
+            'facebook' => ['nullable',  'min:2', 'max:255', 'url'],
+            'instagram' => ['nullable',  'min:2', 'max:255', 'url'],
+            'twitter' => ['nullable',  'min:2', 'max:255', 'url'],
+            'website' => ['nullable',  'min:2', 'max:255', 'url'],
+            'linkedin' => ['nullable', 'min:2', 'max:255', 'url'],
         ];
     }
 
