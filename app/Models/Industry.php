@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,9 +14,9 @@ class Industry extends Model
 
     protected $fillable = ['name'];
 
-    public function scopeFindByName($query, $value)
+    public function scopeFindByName(Builder $query, string $name): Builder
     {
-        return $query->where('name', $value);
+        return $query->where('name', $name);
     }
 
 }

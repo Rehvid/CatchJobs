@@ -1,10 +1,11 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Social extends Model
 {
@@ -24,7 +25,7 @@ class Social extends Model
         return $query->where('social_network_id', $socialNetworkId);
     }
 
-    public function socialNetwork() {
+    public function socialNetwork(): BelongsTo {
         return $this->belongsTo(SocialNetwork::class);
     }
 }
