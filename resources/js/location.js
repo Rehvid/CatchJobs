@@ -17,6 +17,7 @@ class Location {
             this.initializeProperties();
             this.handleSelectedInputRadio();
             this.listenToChangeRadioInput();
+            this.selectOldValueForProvince()
         }
     }
 
@@ -87,7 +88,6 @@ class Location {
             }
 
             if (target.hasAttribute('data-location-id')) {
-                console.log('location-id');
                 this.setLocationFromDatabase(target.getAttribute('data-url'));
             }
 
@@ -118,6 +118,19 @@ class Location {
                 }
             })
         })
+    }
+
+    selectOldValueForProvince() {
+        const oldValueProvince = document.querySelector('.old_province');
+        const province = document.querySelector('#province');
+
+        if (!oldValueProvince || !province) {
+            return false;
+        }
+
+        if (oldValueProvince.value) {
+            province.value = oldValueProvince.value;
+        }
     }
 }
 
