@@ -13,6 +13,11 @@
                     @include('company.partials.location-inputs', ['locations' => $locations])
                 </div>
 
+                <div class="w-full lg:mt-10">
+                    @include('company.partials.social-fields')
+                </div>
+
+
                 <div class="flex items-center gap-4 px-4">
                     <x-primary-button class="w-full bordered-full">{{ __('company.create') }}</x-primary-button>
                 </div>
