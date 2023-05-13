@@ -3,6 +3,8 @@ return [
     'list_title' => 'Firmy',
     'create_title' => 'Podstawowe informacje o twojej firmie',
     'location_title' => 'Informacje o lokalizacji twojej firmy',
+    'social_title' => 'Social media twojej firmy',
+
     'name' => [
         'label' => 'Nazwa firmy',
         'placeholder' => 'XyzCorp48'
@@ -29,6 +31,21 @@ return [
     'benefits' => [
         'label' => 'Benefity',
         'placeholder' => '',
+    ],
+    'facebook' => [
+        'label' => 'Facebook'
+    ],
+    'instagram' => [
+        'label' => 'Instagram'
+    ],
+    'twitter' => [
+        'label' => 'Twitter'
+    ],
+    'website' => [
+        'label' => 'Adres twojej strony'
+    ],
+    'linkedin' => [
+        'label' => 'Linkedin'
     ],
 
     'success' => [
