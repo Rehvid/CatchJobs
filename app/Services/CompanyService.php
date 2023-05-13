@@ -7,6 +7,8 @@ use App\Models\Benefit;
 use App\Models\Company;
 use App\Models\Industry;
 use App\Models\Location;
+use App\Models\Social;
+use App\Models\SocialNetwork;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -21,6 +23,7 @@ class CompanyService
         $this->transformValidatedCompanyDataToCollection($companyData);
         $this->company = $this->createCompany();
         $this->syncBenefitsForCompany();
+        $this->handleSocialsForCompany();
     }
 
     private function transformValidatedCompanyDataToCollection($companyData): void
@@ -100,5 +103,48 @@ class CompanyService
     private function updateLocationForCompany(): void
     {
         $this->company->location?->update($this->companyCollection->all());
+    }
+
+    private function handleSocialsForCompany(): void
+    {
+        $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
+
+        $socialNetworks->each(function (string $name, int $id)  {
+            $social = $this->company->socials->find($id);
+            $url = $this->companyCollection->get($name);
+
+            if ($social) {
+                is_null($url) === true
+                    ? $this->deleteSocialForCompany($social)
+                    : $this->updateSocialForCompany($social);
+
+                return;
+            }
+
+            if (!is_null($url)) {
+                $this->createSocialForCompany((string) $url, $id);
+            }
+        });
+    }
+
+    private function deleteSocialForCompany(Social $social): void
+    {
+       $social->delete();
+    }
+
+    private function updateSocialForCompany(Social $social): void
+    {
+       $social->update([
+           'url' => $this->companyCollection->get($social->socialNetwork->name)
+       ]);
+    }
+
+    private function createSocialForCompany(string $url, int $socialId): void
+    {
+        Social::create([
+            'company_id' => $this->company->id,
+            'social_network_id' => $socialId,
+            'url' => $url
+        ]);
     }
 }
