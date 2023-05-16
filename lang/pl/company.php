@@ -4,7 +4,7 @@ return [
     'create_title' => 'Podstawowe informacje o twojej firmie',
     'location_title' => 'Informacje o lokalizacji twojej firmy',
     'social_title' => 'Social media twojej firmy',
-
+    'media_title' => 'Zdjęcia twojej firmy',
     'name' => [
         'label' => 'Nazwa firmy',
         'placeholder' => 'XyzCorp48'
@@ -50,6 +50,16 @@ return [
 
     'success' => [
         'store' => 'Udało ci się utworzyć firme'
+    ],
+
+    'logo' => [
+        'label' => 'Logo twojej firmy'
+    ],
+    'cover' => [
+        'label' => 'Zdjęcie nagłówkowe'
+    ],
+    'gallery' => [
+        'label' => 'Galeria'
     ],
 
     'status' => 'Status',
