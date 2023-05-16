@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use JsonException;
 use function PHPUnit\Framework\isNull;
@@ -66,6 +67,25 @@ class CompanyRequest extends FormRequest
             'twitter' => ['nullable',  'min:2', 'max:255', 'url'],
             'website' => ['nullable',  'min:2', 'max:255', 'url'],
             'linkedin' => ['nullable', 'min:2', 'max:255', 'url'],
+            'image_logo' => [
+                'nullable',
+                File::image()
+                    ->types(['jpg', 'jpeg', 'png', 'webp'])
+                    ->max(4 * 1024)
+            ],
+            'image_cover' => [
+                'nullable',
+                File::image()
+                    ->types(['jpg', 'jpeg', 'png', 'webp'])
+                    ->max(4 * 1024)
+            ],
+            'image_gallery' => ['nullable', 'array'],
+            'image_gallery.*' => [
+                File::image()
+                    ->types(['jpg', 'jpeg', 'png', 'webp'])
+                    ->max(4 * 1024)
+            ]
+
         ];
     }
 
