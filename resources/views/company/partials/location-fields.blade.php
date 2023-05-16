@@ -38,7 +38,7 @@
                    id="accordion-radio-location-{{ $location->id }}"
                    data-location-id=" {{ $location->id }}"
                    data-url="{{route('locations.get', $location->id)}}"
-                   @if((int) old('location_id') === $location->id) checked @endif
+                   @if((int) old('location_id', $company->location_id ?? '') === $location->id) checked @endif
                    value="{{ $location->id }}"
             />
             <x-input-label class="flex flex-wrap"  for="accordion-radio-location-{{ $location->id }}">
@@ -86,7 +86,7 @@
 
         <div class="w-full px-4 mb-8">
             <x-input-label for="province" :value="__('location.province.label')" />
-            <input type="hidden" class="old_province" value="{{ old('province') }}">
+            <input type="hidden" class="old_province" value="{{ old('province', $company->location->province ?? '') }}">
             <x-select name="province" id="province">
                 <option value="default">{{ __('location.province.placeholder') }}</option>
                 <option value="Dolnośląskie">Dolnośląskie</option>
@@ -133,7 +133,7 @@
                 class="block mt-1 w-full"
                 type="text"
                 name="street"
-                value="{{ old('street') }}"
+                value="{{ old('street', $company->location->street ?? '') }}"
                 autocomplete="off"
                 placeholder="{{ __('location.street.placeholder') }}"
             />
@@ -149,7 +149,7 @@
                 class="block mt-1 w-full"
                 type="email"
                 name="email"
-                value="{{ old('email', $company->adress->email ?? '') }}"
+                value="{{ old('email', $company->location->email ?? '') }}"
                 autocomplete="off"
                 placeholder="{{ __('location.email.placeholder') }}"
             />
@@ -166,7 +166,7 @@
                 type="tel"
                 name="phone"
                 placeholder="{{ __('location.phone.placeholder') }}"
-                value="{{ old('phone', $company->location->name ?? '') }}"
+                value="{{ old('phone', $company->location->phone ?? '') }}"
                 autocomplete="off"
             />
             <x-input-error :messages="$errors->get('phone')" class="mt-1 location-error" />
