@@ -61,4 +61,9 @@ class Company extends Model
     {
         return $this->hasMany(Social::class);
     }
+
+    public function files(): BelongsToMany
+    {
+        return $this->belongsToMany(File::class);
+    }
 }
