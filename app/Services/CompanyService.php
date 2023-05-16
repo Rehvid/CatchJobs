@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Models\Benefit;
 use App\Models\Company;
+use App\Models\File;
 use App\Models\Industry;
 use App\Models\Location;
 use App\Models\Social;
@@ -24,6 +25,7 @@ class CompanyService
         $this->company = $this->createCompany();
         $this->syncBenefitsForCompany();
         $this->handleSocialsForCompany();
+        $this->handleUploadedImagesForCompany();
     }
 
     private function transformValidatedCompanyDataToCollection($companyData): void
@@ -92,7 +94,7 @@ class CompanyService
 
     private function syncBenefitsForCompany(): void
     {
-       $this->company->benefits()->sync($this->companyCollection->get('benefits'));
+        $this->company->benefits()->sync($this->companyCollection->get('benefits'));
     }
 
     private function createLocationForCompany(): Location
@@ -109,34 +111,34 @@ class CompanyService
     {
         $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
 
-        $socialNetworks->each(function (string $name, int $id)  {
-            $social = $this->company->socials->find($id);
-            $url = $this->companyCollection->get($name);
+         $socialNetworks->each(function (string $name, int $id)  {
+             $social = $this->company->socials->find($id);
+             $url = $this->companyCollection->get($name);
 
-            if ($social) {
-                is_null($url) === true
-                    ? $this->deleteSocialForCompany($social)
-                    : $this->updateSocialForCompany($social);
+             if ($social) {
+                 is_null($url) === true
+                     ? $this->deleteSocialForCompany($social)
+                     : $this->updateSocialForCompany($social);
 
-                return;
-            }
+                 return;
+             }
 
-            if (!is_null($url)) {
-                $this->createSocialForCompany((string) $url, $id);
-            }
-        });
+             if (!is_null($url)) {
+                 $this->createSocialForCompany((string) $url, $id);
+             }
+         });
     }
 
     private function deleteSocialForCompany(Social $social): void
     {
-       $social->delete();
+        $social->delete();
     }
 
     private function updateSocialForCompany(Social $social): void
     {
-       $social->update([
-           'url' => $this->companyCollection->get($social->socialNetwork->name)
-       ]);
+        $social->update([
+            'url' => $this->companyCollection->get($social->socialNetwork->name)
+        ]);
     }
 
     private function createSocialForCompany(string $url, int $socialId): void
@@ -145,6 +147,48 @@ class CompanyService
             'company_id' => $this->company->id,
             'social_network_id' => $socialId,
             'url' => $url
+        ]);
+    }
+
+    private function handleUploadedImagesForCompany(): void
+    {
+        $images = $this->companyCollection->filter(function($value, string $key) {
+            return Str::startsWith($key, 'image') && $value !== null;
+        });
+
+        $images->each(function($image, $key){
+            $collection = Str::after($key, 'image_');
+            is_array($image) === true
+                ? $this->storeMultipleImagesForCompany($collection, images: $image)
+                : $this->storeImageForCompany($collection, $image);
+        });
+
+    }
+
+    private function storeMultipleImagesForCompany(string $collection, array $images): void
+    {
+        foreach ($images as $image) {
+            $this->storeImageForCompany($collection, $image);
+        }
+    }
+
+    private function storeImageForCompany(string $collection, $image): void
+    {
+        $image->store($collection, config('app.uploads.disk'));
+        $image = $this->createImage($collection, $image);
+        $this->company->files()->attach($image->id);
+    }
+
+    private function createImage(string $collection, $image): File
+    {
+        $path = $collection . '/' . $image->hashName();
+
+        return File::create([
+            'name' => $image->hashName(),
+            'disk' => config('app.uploads.disk'),
+            'path' => $path,
+            'mime_type' => $image->getClientMimeType(),
+            'collection' => $collection,
         ]);
     }
 }
