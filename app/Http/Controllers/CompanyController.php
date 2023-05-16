@@ -45,7 +45,7 @@ class CompanyController extends Controller
             !$user->isAdmin(), fn($query) => $query->byUser()
         )->get();
 
-        return view('company.create', compact('locations'));
+        return view('company.form', compact('locations'));
     }
 
     public function store(CompanyRequest $request): RedirectResponse
@@ -62,9 +62,8 @@ class CompanyController extends Controller
         //
     }
 
-    public function edit(string $id)
+    public function edit(Company $company)
     {
-        //
     }
 
     public function update(Request $request, string $id)

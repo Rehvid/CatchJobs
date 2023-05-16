@@ -4,18 +4,25 @@
             <form
                 class="flex flex-wrap mb-6 p-4 sm:p-8 bg-white shadow sm:rounded-lg"
                 method="post"
-                action="{{ route('companies.store') }}"
+                @if(isset($company))
+                    action="{{ route('companies.update', $company) }}"
+                @else
+                    action="{{ route('companies.store') }}"
+                @endif
                 enctype="multipart/form-data"
             >
                 @csrf
 
+                @if(isset($company))
+                    @method('patch')
+                @endif
 
                 <div class="w-full">
-                    @include('company.partials.company-inputs')
+                    @include('company.partials.company-fields')
                 </div>
 
                 <div class="w-full lg:mt-10">
-                    @include('company.partials.location-inputs', ['locations' => $locations])
+                    @include('company.partials.location-fields')
                 </div>
 
                 <div class="w-full lg:mt-10">
