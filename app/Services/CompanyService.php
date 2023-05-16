@@ -10,6 +10,7 @@ use App\Models\Industry;
 use App\Models\Location;
 use App\Models\Social;
 use App\Models\SocialNetwork;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -152,11 +153,11 @@ class CompanyService
 
     private function handleUploadedImagesForCompany(): void
     {
-        $images = $this->companyCollection->filter(function($value, string $key) {
+        $images = $this->companyCollection->filter(function(mixed $value, string $key) {
             return Str::startsWith($key, 'image') && $value !== null;
         });
 
-        $images->each(function($image, $key){
+        $images->each(function(mixed $image, string $key){
             $collection = Str::after($key, 'image_');
             is_array($image) === true
                 ? $this->storeMultipleImagesForCompany($collection, images: $image)
@@ -172,22 +173,22 @@ class CompanyService
         }
     }
 
-    private function storeImageForCompany(string $collection, $image): void
+    private function storeImageForCompany(string $collection, UploadedFile $uploadedImage): void
     {
-        $image->store($collection, config('app.uploads.disk'));
-        $image = $this->createImage($collection, $image);
-        $this->company->files()->attach($image->id);
+        $uploadedImage->store($collection, config('app.uploads.disk'));
+        $file = $this->createImage($collection, $uploadedImage);
+        $this->company->files()->attach($file->id);
     }
 
-    private function createImage(string $collection, $image): File
+    private function createImage(string $collection, UploadedFile $uploadedImage): File
     {
-        $path = $collection . '/' . $image->hashName();
+        $path = $collection . '/' . $uploadedImage->hashName();
 
         return File::create([
-            'name' => $image->hashName(),
+            'name' => $uploadedImage->hashName(),
             'disk' => config('app.uploads.disk'),
             'path' => $path,
-            'mime_type' => $image->getClientMimeType(),
+            'mime_type' => $uploadedImage->getClientMimeType(),
             'collection' => $collection,
         ]);
     }
