@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use App\Models\Location;
+use App\Models\SocialNetwork;
 use App\Services\CompanyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,7 +46,9 @@ class CompanyController extends Controller
             !$user->isAdmin(), fn($query) => $query->byUser()
         )->get();
 
-        return view('company.form', compact('locations'));
+        $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
+
+        return view('company.form', compact('locations', 'socialNetworks'));
     }
 
     public function store(CompanyRequest $request): RedirectResponse
@@ -64,6 +67,16 @@ class CompanyController extends Controller
 
     public function edit(Company $company)
     {
+        $company->load('benefits', 'socials', 'files');
+        $user = Auth::user();
+
+        $locations = Location::when(
+            !$user->isAdmin(), fn($query) => $query->byUser()
+        )->get();
+
+        $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
+
+        return view('company.form', compact('locations', 'company', 'socialNetworks'));
     }
 
     public function update(Request $request, string $id)
