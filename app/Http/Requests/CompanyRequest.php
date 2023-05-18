@@ -21,7 +21,7 @@ class CompanyRequest extends FormRequest
         }
 
         if ($this->routeIs('companies.update')) {
-            return $this->user()->can('update', Company::class);
+            return $this->user()->can('update', Company::find($this->company_id));
         }
 
         return false;
@@ -30,8 +30,19 @@ class CompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:2', 'max:255', 'unique:'.Company::class],
-            'vat_number' => ['required', 'string', 'size:10', 'unique:'.Company::class],
+            'name' => [
+                'required',
+                'string',
+                'min:2',
+                'max:255',
+                Rule::unique('companies', 'name')->ignore($this->company_id)
+            ],
+            'vat_number' => [
+                'required',
+                'string',
+                'size:10',
+                Rule::unique('companies', 'vat_number')->ignore($this->company_id)
+            ],
             'description' => ['nullable', 'string', 'max:1000'],
             'employees' => ['nullable', 'string'],
             'foundation_year' => ['nullable', 'integer', 'digits:4', 'gt:0'],
@@ -50,7 +61,7 @@ class CompanyRequest extends FormRequest
                 'email',
                 'min:2',
                 'max:255',
-                Rule::unique('locations')
+                Rule::unique('locations', 'email')
                     ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
             ],
             'phone' => [
@@ -59,7 +70,7 @@ class CompanyRequest extends FormRequest
                 'numeric',
                 'min_digits:9',
                 'max_digits:15',
-                Rule::unique('locations')
+                Rule::unique('locations','phone')
                     ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
             ],
             'facebook' => ['nullable',  'min:2', 'max:255', 'url'],
@@ -71,19 +82,22 @@ class CompanyRequest extends FormRequest
                 'nullable',
                 File::image()
                     ->types(['jpg', 'jpeg', 'png', 'webp'])
-                    ->max(4 * 1024)
+                    ->max(1024)
+                    ->dimensions(Rule::dimensions()->maxWidth(100)->maxHeight(100))
             ],
             'image_cover' => [
                 'nullable',
                 File::image()
                     ->types(['jpg', 'jpeg', 'png', 'webp'])
-                    ->max(4 * 1024)
+                    ->max(2 * 1024)
+                    ->dimensions(Rule::dimensions()->maxWidth(1200)->maxHeight(400))
             ],
             'image_gallery' => ['nullable', 'array'],
             'image_gallery.*' => [
                 File::image()
                     ->types(['jpg', 'jpeg', 'png', 'webp'])
-                    ->max(4 * 1024)
+                    ->max(1024)
+                    ->dimensions(Rule::dimensions()->maxWidth(540)->maxHeight(360))
             ]
 
         ];
