@@ -13,6 +13,7 @@ use App\Models\SocialNetwork;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CompanyService
@@ -33,6 +34,34 @@ class CompanyService
         $this->company = $company;
         $this->updateCompany();
         $this->handleActionsForCompany();
+    }
+
+    public function destroyCompany(Company $company): void
+    {
+        $this->company = $company;
+        $this->destroyFilesForCompany();
+        $this->destroySocialsForCompany();
+        $this->company->delete();
+    }
+
+    private function destroyFilesForCompany(): void
+    {
+        $files = $this->company->files;
+
+        $files?->each(function (File $file) {
+            if (Storage::exists($file->path)) {
+                Storage::disk('public')->delete($file->path);
+                $file->companies()->detach();
+                $file->delete();
+            }
+        });
+    }
+
+    private function destroySocialsForCompany(): void
+    {
+        $socials = $this->company->socials;
+
+        $socials?->each(fn(Social $social) => $this->deleteSocialForCompany($social));
     }
 
     private function updateCompany(): void

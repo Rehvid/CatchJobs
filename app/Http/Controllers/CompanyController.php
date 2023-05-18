@@ -92,8 +92,10 @@ class CompanyController extends Controller
         return redirect()->route('companies.list')->with('success', __('company.success.update'));
     }
 
-    public function destroy(string $id)
+    public function destroy(Company $company): RedirectResponse
     {
-        //
+        $this->companyService->destroyCompany($company);
+
+        return redirect()->route('companies.list')->with('success', __('company.success.destroy'));
     }
 }
