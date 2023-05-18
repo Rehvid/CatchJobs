@@ -13,6 +13,8 @@
             >
                 @csrf
 
+                <input type="hidden" name="company_id" value="{{ $company->id ?? null }}" />
+
                 @if(isset($company))
                     @method('patch')
                 @endif
@@ -36,7 +38,13 @@
 
 
                 <div class="flex items-center gap-4 px-4">
-                    <x-primary-button class="w-full bordered-full">{{ __('company.create') }}</x-primary-button>
+                    <x-primary-button class="w-full bordered-full">
+                        @if(isset($company))
+                            {{ __('company.update') }}
+                        @else
+                            {{ __('company.create') }}
+                        @endif
+                    </x-primary-button>
                 </div>
 
 

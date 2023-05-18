@@ -24,6 +24,24 @@ class CompanyService
     {
         $this->transformValidatedCompanyDataToCollection($companyData);
         $this->company = $this->createCompany();
+        $this->handleActionsForCompany();
+    }
+
+    public function editCompany(array $companyData, Company $company): void
+    {
+        $this->transformValidatedCompanyDataToCollection($companyData);
+        $this->company = $company;
+        $this->updateCompany();
+        $this->handleActionsForCompany();
+    }
+
+    private function updateCompany(): void
+    {
+        $this->company->update($this->companyCollection->toArray());
+    }
+
+    private function handleActionsForCompany(): void
+    {
         $this->syncBenefitsForCompany();
         $this->handleSocialsForCompany();
         $this->handleUploadedImagesForCompany();

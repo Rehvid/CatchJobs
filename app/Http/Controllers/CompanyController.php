@@ -76,12 +76,20 @@ class CompanyController extends Controller
 
         $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
 
-        return view('company.form', compact('locations', 'company', 'socialNetworks'));
+        $data = [
+            'locations',
+            'company',
+            'socialNetworks'
+        ];
+
+        return view('company.form', compact($data));
     }
 
-    public function update(Request $request, string $id)
+    public function update(CompanyRequest $request, Company $company): RedirectResponse
     {
-        //
+        $this->companyService->editCompany($request->validated(), $company);
+
+        return redirect()->route('companies.list')->with('success', __('company.success.update'));
     }
 
     public function destroy(string $id)
