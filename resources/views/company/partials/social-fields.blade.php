@@ -12,7 +12,7 @@
             class="block mt-1 w-full"
             type="text"
             name="{{$socialNetwork}}"
-            value="{{ old($socialNetwork, isset($company) === true ? $company->socialByNetworkId($socialNetworkId) : '')}}"
+            value="{{ old($socialNetwork, isset($company) === true ? $company->socialByNetworkId($socialNetworkId)?->url : '')}}"
             autofocus
             autocomplete="name"
         />

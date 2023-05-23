@@ -73,13 +73,11 @@ class Company extends Model
         return $this->belongsToMany(File::class);
     }
 
-    public function socialByNetworkId(int $socialNetworkId): ?string
+    public function socialByNetworkId(int $socialNetworkId): ?Social
     {
-        $socials = $this->socials()->get();
-
-        return $socials
-            ->filter(fn (?Social $social) => $social->social_network_id === $socialNetworkId)
-            ?->value('url');
+        return $this->socials()
+            ->get()
+            ->first(fn (?Social $social) => $social->social_network_id === $socialNetworkId);
     }
 
     public function getImageByCollection(string $collection): ?string

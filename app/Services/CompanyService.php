@@ -19,67 +19,15 @@ use Illuminate\Support\Str;
 class CompanyService
 {
     private Collection $companyCollection;
-    private readonly Company $company;
+    private array $fileIds = [];
 
-    public function storeCompany(array $companyData): void
-    {
-        $this->transformValidatedCompanyDataToCollection($companyData);
-        $this->company = $this->createCompany();
-        $this->handleActionsForCompany();
-    }
 
-    public function editCompany(array $companyData, Company $company): void
-    {
-        $this->transformValidatedCompanyDataToCollection($companyData);
-        $this->company = $company;
-        $this->updateCompany();
-        $this->handleActionsForCompany();
-    }
 
-    public function destroyCompany(Company $company): void
-    {
-        $this->company = $company;
-        $this->destroyFilesForCompany();
-        $this->destroySocialsForCompany();
-        $this->company->delete();
-    }
-
-    private function destroyFilesForCompany(): void
-    {
-        $files = $this->company->files;
-
-        $files?->each(function (File $file) {
-            if (Storage::exists($file->path)) {
-                Storage::disk('public')->delete($file->path);
-                $file->companies()->detach();
-                $file->delete();
-            }
-        });
-    }
-
-    private function destroySocialsForCompany(): void
-    {
-        $socials = $this->company->socials;
-
-        $socials?->each(fn(Social $social) => $this->deleteSocialForCompany($social));
-    }
-
-    private function updateCompany(): void
-    {
-        $this->company->update($this->companyCollection->toArray());
-    }
-
-    private function handleActionsForCompany(): void
-    {
-        $this->syncBenefitsForCompany();
-        $this->handleSocialsForCompany();
-        $this->handleUploadedImagesForCompany();
-    }
-
-    private function transformValidatedCompanyDataToCollection($companyData): void
+    public function transformValidatedCompanyDataToCollection(array $companyData): void
     {
         $this->companyCollection = collect($companyData);
         $this->putDataToCompanyCollection();
+
 
         if ($this->companyCollection->get('benefits')) {
             $this->transformBenefitsForCompanyCollection();
@@ -93,6 +41,99 @@ class CompanyService
             $this->companyCollection->put('location_id', $this->createLocationForCompany()->id);
         }
 
+    }
+
+    public function createCompany(): Company
+    {
+        return Company::create($this->companyCollection->toArray());
+    }
+
+    public function updateCompany(Company $company): void
+    {
+        $company->update($this->companyCollection->toArray());
+    }
+
+
+    public function syncBenefitsForCompany(Company $company): void
+    {
+        $company->benefits()->sync($this->companyCollection->get('benefits'));
+    }
+
+    public function handleSocialsForCompany(Company $company): void
+    {
+        $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
+
+        $socialNetworks->each(function (string $name, int $socialNetworkId) use ($company)  {
+            $social = $company->socialByNetworkId($socialNetworkId);
+            $url = $this->companyCollection->get($name);
+
+            if ($url) {
+                $socialDataToFind = ['id' => $social->id ?? null];
+                $socialData = [
+                    'company_id' => $company->id,
+                    'social_network_id' => $socialNetworkId,
+                    'url' => $url
+                ];
+                $this->updateOrCreateSocialForCompany($socialDataToFind, $socialData);
+
+                return;
+            }
+
+            if ($social) {
+                $this->deleteSocialForCompany($social);
+            }
+        });
+    }
+
+    public function handleUploadedImagesForCompany(Company $company): void
+    {
+
+        $images = $this->companyCollection->filter(function(mixed $value, string $key) {
+            return Str::startsWith($key, 'image_') && $value !== null;
+        });
+
+        $images->each(function(mixed $image, string $key){
+            $collection = Str::after($key, 'image_');
+
+            is_array($image)
+                ? $this->storeMultipleImagesForCompany($collection, images: $image)
+                : $this->storeImageForCompany($collection, $image);
+        });
+
+        $this->attachFilesToCompany($company);
+    }
+
+    public function destroySocialsForCompany(Company $company): void
+    {
+        $company->socials?->each(fn(Social $social) => $this->deleteSocialForCompany($social));
+    }
+
+    public function destroyFilesForCompany(Company $company): void
+    {
+        $company->files?->each(function (File $file) {
+            if (Storage::exists($file->path)) {
+                $this->destroyImageForCompany($file);
+            }
+        });
+    }
+
+    public function destroyImageForCompany(File $file): ?bool
+    {
+        Storage::disk(config('app.uploads.disk'))->delete($file->path);
+        $file->companies()->detach();
+
+        return $file->delete();
+    }
+
+
+    public function destroyBenefitsForCompany(Company $company): void
+    {
+        $company->benefits?->each(fn (Benefit $benefit) => $benefit->delete());
+    }
+
+    public function destroyCompany(Company $company): void
+    {
+        $company->delete();
     }
 
     private function putDataToCompanyCollection(): void
@@ -134,15 +175,9 @@ class CompanyService
         $this->companyCollection->put('industry_id', Industry::findByName($industry)->value('id'));
     }
 
-
-    private function createCompany(): Company
+    private function updateOrCreateSocialForCompany(array $socialDataToFind, array $socialData): void
     {
-        return Company::create($this->companyCollection->toArray());
-    }
-
-    private function syncBenefitsForCompany(): void
-    {
-        $this->company->benefits()->sync($this->companyCollection->get('benefits'));
+        Social::updateOrCreate($socialDataToFind, $socialData);
     }
 
     private function createLocationForCompany(): Location
@@ -152,65 +187,12 @@ class CompanyService
 
     private function updateLocationForCompany(): void
     {
-        $this->company->location?->update($this->companyCollection->all());
+        $this->company->location?->update($this->companyCollection->toArray());
     }
 
-    private function handleSocialsForCompany(): void
+    private function deleteSocialForCompany(Social $social): bool|null
     {
-        $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
-
-         $socialNetworks->each(function (string $name, int $id)  {
-             $social = $this->company->socials->find($id);
-             $url = $this->companyCollection->get($name);
-
-             if ($social) {
-                 is_null($url) === true
-                     ? $this->deleteSocialForCompany($social)
-                     : $this->updateSocialForCompany($social);
-
-                 return;
-             }
-
-             if (!is_null($url)) {
-                 $this->createSocialForCompany((string) $url, $id);
-             }
-         });
-    }
-
-    private function deleteSocialForCompany(Social $social): void
-    {
-        $social->delete();
-    }
-
-    private function updateSocialForCompany(Social $social): void
-    {
-        $social->update([
-            'url' => $this->companyCollection->get($social->socialNetwork->name)
-        ]);
-    }
-
-    private function createSocialForCompany(string $url, int $socialId): void
-    {
-        Social::create([
-            'company_id' => $this->company->id,
-            'social_network_id' => $socialId,
-            'url' => $url
-        ]);
-    }
-
-    private function handleUploadedImagesForCompany(): void
-    {
-        $images = $this->companyCollection->filter(function(mixed $value, string $key) {
-            return Str::startsWith($key, 'image') && $value !== null;
-        });
-
-        $images->each(function(mixed $image, string $key){
-            $collection = Str::after($key, 'image_');
-            is_array($image) === true
-                ? $this->storeMultipleImagesForCompany($collection, images: $image)
-                : $this->storeImageForCompany($collection, $image);
-        });
-
+        return $social->delete();
     }
 
     private function storeMultipleImagesForCompany(string $collection, array $images): void
@@ -220,23 +202,30 @@ class CompanyService
         }
     }
 
-    private function storeImageForCompany(string $collection, UploadedFile $uploadedImage): void
+    private function storeImageForCompany(string $collection, UploadedFile $image): void
     {
-        $uploadedImage->store($collection, config('app.uploads.disk'));
-        $file = $this->createImage($collection, $uploadedImage);
-        $this->company->files()->attach($file->id);
+        $image->store($collection, config('app.uploads.disk'));
+
+        $file = $this->createImage($collection, $image);
+
+        $this->fileIds[] = $file->id;
     }
 
-    private function createImage(string $collection, UploadedFile $uploadedImage): File
+    private function createImage(string $collection, UploadedFile $image): File
     {
-        $path = $collection . '/' . $uploadedImage->hashName();
+        $path = $collection . '/' . $image->hashName();
 
         return File::create([
-            'name' => $uploadedImage->hashName(),
+            'name' => $image->hashName(),
             'disk' => config('app.uploads.disk'),
             'path' => $path,
-            'mime_type' => $uploadedImage->getClientMimeType(),
+            'mime_type' => $image->getClientMimeType(),
             'collection' => $collection,
         ]);
+    }
+
+    private function attachFilesToCompany(Company $company): void
+    {
+        $company->files()->attach($this->fileIds);
     }
 }

@@ -30,8 +30,8 @@ class CompanyController extends Controller
         $user = Auth::user();
 
         $companies = Company::when(
-                !$user->isAdmin(), fn($query) => $query->byUser($user->id)
-            )
+            !$user->isAdmin(), fn($query) => $query->byUser($user->id)
+        )
             ->simplePaginate();
 
         return view('company.list', ['companies' => $companies]);
@@ -55,7 +55,11 @@ class CompanyController extends Controller
     {
         $this->authorize('create', Company::class);
 
-        $this->companyService->storeCompany($request->validated());
+        $this->companyService->transformValidatedCompanyDataToCollection($request->validated());
+        $company = $this->companyService->createCompany();
+        $this->companyService->syncBenefitsForCompany($company);
+        $this->companyService->handleSocialsForCompany($company);
+        $this->companyService->handleUploadedImagesForCompany($company);
 
         return redirect()->route('companies.list')->with('success', __('company.success.store'));
     }
@@ -67,6 +71,8 @@ class CompanyController extends Controller
 
     public function edit(Company $company)
     {
+        $this->authorize('update', $company);
+
         $company->load('benefits', 'socials', 'files');
         $user = Auth::user();
 
@@ -87,13 +93,24 @@ class CompanyController extends Controller
 
     public function update(CompanyRequest $request, Company $company): RedirectResponse
     {
-        $this->companyService->editCompany($request->validated(), $company);
+        $this->authorize('update', $company);
+
+        $this->companyService->transformValidatedCompanyDataToCollection($request->validated());
+        $this->companyService->updateCompany($company);
+        $this->companyService->syncBenefitsForCompany($company);
+        $this->companyService->handleSocialsForCompany($company);
+        $this->companyService->handleUploadedImagesForCompany($company);
 
         return redirect()->route('companies.list')->with('success', __('company.success.update'));
     }
 
     public function destroy(Company $company): RedirectResponse
     {
+        $this->authorize('delete', $company);
+
+        $this->companyService->destroySocialsForCompany($company);
+        $this->companyService->destroyFilesForCompany($company);
+        $this->companyService->destroyBenefitsForCompany($company);
         $this->companyService->destroyCompany($company);
 
         return redirect()->route('companies.list')->with('success', __('company.success.destroy'));
