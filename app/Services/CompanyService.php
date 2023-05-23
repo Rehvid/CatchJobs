@@ -111,10 +111,11 @@ class CompanyService
     public function destroyFilesForCompany(Company $company): void
     {
         $company->files?->each(function (File $file) {
-            if (Storage::exists($file->path)) {
+            if (Storage::disk(config('app.uploads.disk'))->exists($file->path)) {
                 $this->destroyImageForCompany($file);
             }
         });
+
     }
 
     public function destroyImageForCompany(File $file): ?bool
