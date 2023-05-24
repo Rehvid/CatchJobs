@@ -34,7 +34,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/industries', IndustryController::class)->name('industries');
     Route::get('/benefits', BenefitController::class)->name('benefits');
 
+
     Route::get('/companies/list', [CompanyController::class, 'list'])->name('companies.list');
+    Route::delete('/companies/destroy/image', [CompanyController::class, 'destroyImage'])->name('companies.destroy_image');
     Route::resource('companies', CompanyController::class);
 
     Route::resource('locations', LocationController::class);
