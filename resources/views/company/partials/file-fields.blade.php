@@ -4,7 +4,23 @@
     </h2>
 </div>
 
+
+
 <div class="p-6 space-y-6 ">
+    @if(isset($company) && $company->fileByCollection('logo'))
+        <div class="relative max-w-[100px]">
+            <img class="rounded-full"
+                 src="{{ $company->fileByCollection('logo')->getPublicPath() }}"
+                 alt="logo"
+            />
+            <a class="js-remove-image"
+               data-url="{{route('companies.destroy_image')}}"
+               data-image-id="{{$company->fileByCollection('logo')->id}}"
+               data-company-id="{{$company->id}}"
+            >
+            </a>
+        </div>
+    @endif
     <x-input-label :value="__('company.logo.label')" for="logo" />
     <x-text-input
         id="logo"
@@ -14,9 +30,26 @@
         value="{{old('image_logo')}}"
     />
     <x-input-error :messages="$errors->get('image_logo')" class="mt-1" />
+
 </div>
 
+
 <div class="p-6 space-y-6 ">
+    @if(isset($company) && $company->fileByCollection('cover'))
+        <div class="relative">
+            <img
+                 class="w-full"
+                 src="{{ $company->fileByCollection('cover')->getPublicPath() }}"
+                 alt="cover"
+            />
+            <a class="js-remove-image"
+               data-url="{{route('companies.destroy_image')}}"
+               data-image-id="{{$company->fileByCollection('cover')->id}}"
+               data-company-id="{{$company->id}}"
+            >
+            </a>
+        </div>
+    @endif
     <x-input-label :value="__('company.cover.label')" for="cover" />
     <x-text-input
         id="cover"
@@ -29,6 +62,21 @@
 </div>
 
 <div class="p-6 space-y-6 ">
+    @if(isset($company) && !empty($company->getGalleryImages()))
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        @foreach($company->getGalleryImages() as $image)
+            <div class="relative">
+                <img class="h-auto max-w-full rounded-lg" src="{{$image->getPublicPath()}}" alt="gallery">
+                <a class="js-remove-image"
+                   data-url="{{route('companies.destroy_image')}}"
+                   data-image-id="{{$image->id}}"
+                   data-company-id="{{$company->id}}"
+                >
+                </a>
+            </div>
+        @endforeach
+        </div>
+    @endif
     <x-input-label :value="__('company.gallery.label')" for="gallery" />
     <x-text-input
         multiple

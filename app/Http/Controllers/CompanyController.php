@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Company\ImageDestroyRequest;
 use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
+use App\Models\File;
 use App\Models\Location;
 use App\Models\SocialNetwork;
 use App\Services\CompanyService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,5 +117,16 @@ class CompanyController extends Controller
         $this->companyService->destroyCompany($company);
 
         return redirect()->route('companies.list')->with('success', __('company.success.destroy'));
+    }
+
+    public function destroyImage(ImageDestroyRequest $request): JsonResponse
+    {
+        $this->authorize('delete', Company::find($request->validated('company_id')));
+
+        return response()->json([
+            'status' => $this->companyService->destroyImageForCompany(
+                File::find($request->validated('id'))
+            )
+        ]);
     }
 }

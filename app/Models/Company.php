@@ -80,25 +80,17 @@ class Company extends Model
             ->first(fn (?Social $social) => $social->social_network_id === $socialNetworkId);
     }
 
-    public function getImageByCollection(string $collection): ?string
+    public function fileByCollection(string $collection): ?File
     {
-        $files = $this->files()->get();
-
-        $pathToImage =  $files->filter( fn(?File $file) => $file->collection === $collection)?->value('path');
-
-        if ($pathToImage) {
-            return url('/' . 'storage/' . $pathToImage);
-        }
-
-        return null;
+        return $this->files()
+            ->get()
+            ->first(fn(?File $file) => $file->collection === $collection);
     }
 
     public function getGalleryImages(): Collection
     {
-        $files = $this->files()->get();
-
-        $galleries = $files->filter(fn(?File $file) => $file->collection === 'gallery');
-
-        return $galleries->map(fn (File $file) => url('/' . 'storage/' . $file->path));
+        return $this->files()
+            ->get()
+            ->filter(fn(?File $file) => $file->collection === 'gallery');
     }
 }

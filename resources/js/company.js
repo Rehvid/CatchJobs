@@ -3,7 +3,7 @@
 import Tagify from '@yaireo/tagify'
 
 import "@yaireo/tagify/dist/tagify.css";
-import { createCKEditorForTextarea, getDataFromServer} from "./app";
+import {createCKEditorForTextarea, deleteDataFromServer, getDataFromServer} from "./app";
 
 
 class Company {
@@ -14,7 +14,8 @@ class Company {
         this.createTagifyForIndustryInput();
         this.createTagifyForBenefitInput();
         this.initCKEditorForDescriptionField();
-        this.selectOldValueEmployeesOption()
+        this.selectOldValueEmployeesOption();
+        this.removeImage();
     }
 
     selectOldValueEmployeesOption() {
@@ -82,6 +83,27 @@ class Company {
 
     initCKEditorForDescriptionField() {
         createCKEditorForTextarea(document.querySelector('.js-textarea'));
+    }
+
+    async removeImage() {
+        document.addEventListener('click', async (e) => {
+            const { target } = e;
+
+            if (target.classList.contains('js-remove-image')) {
+
+                const data = {
+                    id: target.getAttribute('data-image-id'),
+                    company_id: target.getAttribute('data-company-id')
+                }
+
+                const response =  await deleteDataFromServer(target.getAttribute('data-url'), data);
+                response.json().then(response => {
+                    if (response.status) {
+                        target.closest('div').remove();
+                    }
+                })
+            }
+        })
     }
 }
 

@@ -56,4 +56,5 @@
     </div>
     @vite('resources/js/company.js')
     @vite('resources/css/tagify.css')
+    @vite('resources/css/company.css')
 </x-app-layout>

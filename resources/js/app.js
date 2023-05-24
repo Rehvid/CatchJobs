@@ -32,6 +32,35 @@ export function getDataFromServer(url) {
     })
 }
 
+
+export function deleteDataFromServer (url, data) {
+    if (!url) {
+        return console.error('Url is not provided');
+    }
+
+    if (!data) {
+        return console.error('Data are not provided')
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]') || false;
+
+    if (!csrfToken) {
+        return  console.error('Csrf token is not found')
+    }
+
+    return fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text-plain, */*",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRF-TOKEN": csrfToken.getAttribute('content'),
+        },
+        credentials: "same-origin",
+        body: JSON.stringify(data),
+    })
+}
+
 export function createCKEditorForTextarea(element) {
     if (!element) {
         return console.error('Element is not valid');

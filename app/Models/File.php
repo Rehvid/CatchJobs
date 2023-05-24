@@ -22,4 +22,9 @@ class File extends Model
     {
         return $this->belongsToMany(Company::class);
     }
+
+    public function getPublicPath(): string
+    {
+        return url('/' . 'storage/' . $this->path);
+    }
 }
