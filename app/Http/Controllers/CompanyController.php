@@ -12,7 +12,6 @@ use App\Models\SocialNetwork;
 use App\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -22,8 +21,11 @@ class CompanyController extends Controller
 
     public function __construct(private readonly CompanyService $companyService){}
 
-    public function index()
+    public function index(): View
     {
+        $companies = Company::with('benefits','socials', 'files')->paginate(16);
+
+        return view('company.index', compact('companies'));
     }
 
     public function list(): View
@@ -67,9 +69,11 @@ class CompanyController extends Controller
         return redirect()->route('companies.list')->with('success', __('company.success.store'));
     }
 
-    public function show(string $id)
+    public function show(Company $company): View
     {
-        //
+        $company->load('benefits', 'socials', 'files');
+
+        return view('company.show', compact('company'));
     }
 
     public function edit(Company $company)
