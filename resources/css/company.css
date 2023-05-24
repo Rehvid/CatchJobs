@@ -1,3 +1,10 @@
+.company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 285px);
+    grid-gap:1rem;
+    justify-content: center;
+}
+
 .js-remove-image  {
     position: absolute;
     background: #fff;
