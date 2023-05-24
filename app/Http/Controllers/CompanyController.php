@@ -39,7 +39,7 @@ class CompanyController extends Controller
         )
             ->simplePaginate();
 
-        return view('company.list', ['companies' => $companies]);
+        return view('company.list', compact('companies'));
     }
 
     public function create(): View
@@ -89,13 +89,11 @@ class CompanyController extends Controller
 
         $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
 
-        $data = [
-            'locations',
+        return view('company.form', compact([
             'company',
+            'locations',
             'socialNetworks'
-        ];
-
-        return view('company.form', compact($data));
+        ]));
     }
 
     public function update(CompanyRequest $request, Company $company): RedirectResponse
