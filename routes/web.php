@@ -18,28 +18,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::name('guests.')->group(function () {
+    Route::get('/', fn () => view('welcome'))->name('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Industry
     Route::get('/industries', IndustryController::class)->name('industries');
+
+    // Benefit
     Route::get('/benefits', BenefitController::class)->name('benefits');
 
-
+    // Company
     Route::get('/companies/list', [CompanyController::class, 'list'])->name('companies.list');
     Route::delete('/companies/destroy/image', [CompanyController::class, 'destroyImage'])->name('companies.destroy_image');
     Route::resource('companies', CompanyController::class);
 
-    Route::resource('locations', LocationController::class);
+    // Location
     Route::get('/location/{id}', [LocationController::class, 'get'])->name('locations.get');
 });
 
