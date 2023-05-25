@@ -18,6 +18,7 @@ class Company extends Model
 {
 
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'location_id',
@@ -33,7 +34,7 @@ class Company extends Model
 
     protected $casts = [
         'status' => Status::class,
-        'description' =>  CleanHtmlInput::class,
+        'description' => CleanHtmlInput::class,
     ];
 
     protected $with = ['industry', 'location'];
@@ -77,7 +78,17 @@ class Company extends Model
     {
         return $this->socials()
             ->get()
-            ->first(fn (?Social $social) => $social->social_network_id === $socialNetworkId);
+            ->first(fn(?Social $social) => $social->social_network_id === $socialNetworkId);
+    }
+
+    public function getWebsiteSocial(): ?Social
+    {
+        $socialNetwork = SocialNetwork::byName('website')->first();
+
+        if ($socialNetwork) {
+            return $this->socialByNetworkId($socialNetwork->id);
+        }
+        return null;
     }
 
     public function fileByCollection(string $collection): ?File
