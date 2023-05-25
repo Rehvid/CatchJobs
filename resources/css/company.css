@@ -5,6 +5,39 @@
     justify-content: center;
 }
 
+.company-detail {
+    display: grid;
+    grid-template-columns: 800px 400px;
+    grid-gap: 1rem;
+}
+
+.company-grid-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 230px);
+    grid-gap: 1rem;
+}
+
+.company-gallery {
+    width: 100%;
+    max-width: 230px;
+    max-height: 230px;
+    border-radius: 0.5rem;
+
+}
+
+.company-cover {
+    width: 100%;
+    border-radius: 0.125rem;
+    max-width: 800px;
+    max-height: 300px;
+}
+
+.social {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+
 .js-remove-image  {
     position: absolute;
     background: #fff;
