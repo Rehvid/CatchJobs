@@ -32,12 +32,7 @@ class CompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $user = Auth::user();
-
-        $companies = Company::when(
-            !$user->isAdmin(), fn($query) => $query->byUser($user->id)
-        )
-            ->simplePaginate();
+        $companies = Company::byUser()->paginate(16);
 
         return view('company.list', compact('companies'));
     }
@@ -45,12 +40,8 @@ class CompanyController extends Controller
     public function create(): View
     {
         $this->authorize('create', Company::class);
-        $user = Auth::user();
 
-        $locations = Location::when(
-            !$user->isAdmin(), fn($query) => $query->byUser()
-        )->get();
-
+        $locations = Location::byUser()->get();
         $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
 
         return view('company.form', compact('locations', 'socialNetworks'));
@@ -81,12 +72,7 @@ class CompanyController extends Controller
         $this->authorize('update', $company);
 
         $company->load('benefits', 'socials', 'files');
-        $user = Auth::user();
-
-        $locations = Location::when(
-            !$user->isAdmin(), fn($query) => $query->byUser()
-        )->get();
-
+        $locations = Location::byUser()->get();
         $socialNetworks = SocialNetwork::all()->pluck('name', 'id');
 
         return view('company.form', compact([
