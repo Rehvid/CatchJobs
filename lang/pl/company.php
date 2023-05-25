@@ -5,6 +5,8 @@ return [
     'location_title' => 'Informacje o lokalizacji twojej firmy',
     'social_title' => 'Social media twojej firmy',
     'media_title' => 'Zdjęcia twojej firmy',
+    'socials' => 'Social Media',
+    'visit_website' => 'Odwiedź stronę',
     'name' => [
         'label' => 'Nazwa firmy',
         'placeholder' => 'XyzCorp48'
@@ -22,6 +24,7 @@ return [
     ],
     'employees' => [
         'label' => 'Liczba Zatrudnionych pracowników',
+        'show' => 'Pracownicy',
         'placeholder' => '25',
     ],
     'vat_number' => [
