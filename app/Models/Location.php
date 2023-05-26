@@ -34,4 +34,11 @@ class Location extends Model
     {
         return $query->where('user_id', Auth::user()->id);
     }
+
+    public function scopeByUserId(Builder $query, int $userId): Builder
+    {
+        return $query->where('user_id', $userId);
+    }
+
+
 }
