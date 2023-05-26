@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
@@ -43,6 +44,18 @@ Route::middleware('auth')->group(function () {
 
     // Location
     Route::get('/location/{id}', [LocationController::class, 'get'])->name('locations.get');
+
+    // Admin
+    Route::group([
+        'middleware' => 'admin',
+        'as' => 'admin.',
+        'prefix' => 'admin'
+    ], function () {
+        Route::get('/companies/list', [AdminCompanyController::class, 'list'])->name('companies.list');
+        Route::get('/companies/create', [AdminCompanyController::class, 'create'])->name('companies.create');
+        Route::get('/companies/{company}/edit', [AdminCompanyController::class, 'edit'])->name('companies.edit');
+    });
 });
+
 
 require __DIR__.'/auth.php';
