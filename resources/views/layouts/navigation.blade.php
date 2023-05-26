@@ -38,10 +38,17 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <x-dropdown-link :href="route('companies.list')">
-                            {{ __('My companies') }}
-                        </x-dropdown-link>
-
+                        @can('company.list')
+                            @if(Auth::user()->isAdmin())
+                            <x-dropdown-link :href="route('admin.companies.list')">
+                                {{ __('My companies') }}
+                            </x-dropdown-link>
+                            @else
+                                <x-dropdown-link :href="route('companies.list')">
+                                    {{ __('My companies') }}
+                                </x-dropdown-link>
+                            @endif
+                        @endcan
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
