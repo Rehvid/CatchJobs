@@ -6,6 +6,7 @@ import "@yaireo/tagify/dist/tagify.css";
 import {createCKEditorForTextarea, deleteDataFromServer, getDataFromServer} from "./app";
 
 
+
 class Company {
     constructor() {
         this.init();
@@ -14,8 +15,10 @@ class Company {
         this.createTagifyForIndustryInput();
         this.createTagifyForBenefitInput();
         this.initCKEditorForDescriptionField();
+        this.initCKEditorForStatusMessageField();
         this.selectOldValueEmployeesOption();
         this.removeImage();
+        this.triggerModal();
     }
 
     selectOldValueEmployeesOption() {
@@ -82,7 +85,17 @@ class Company {
     }
 
     initCKEditorForDescriptionField() {
-        createCKEditorForTextarea(document.querySelector('.js-textarea'));
+        const description= document.querySelector('.js-textarea');
+        if (description) {
+            createCKEditorForTextarea(description);
+        }
+    }
+
+    initCKEditorForStatusMessageField(){
+        const message = document.querySelector('.js-status-message');
+        if (message) {
+            createCKEditorForTextarea(message);
+        }
     }
 
     async removeImage() {
@@ -103,6 +116,22 @@ class Company {
                     }
                 })
             }
+        })
+    }
+
+    triggerModal() {
+        document.querySelectorAll('.js-status-modal')?.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const { currentTarget } = e;
+                const form = document.querySelector('#company-status');
+                const ckEditorTextarea = document.querySelector('.ck-editor__editable');
+
+                if (form && ckEditorTextarea) {
+                    ckEditorTextarea?.ckeditorInstance?.setData(currentTarget.getAttribute('data-status-message'));
+                    form.action = currentTarget.getAttribute('data-url');
+                    form.querySelector('select').value = currentTarget.getAttribute('data-status-id');
+                }
+            })
         })
     }
 }

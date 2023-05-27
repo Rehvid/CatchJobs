@@ -51,9 +51,12 @@ Route::middleware('auth')->group(function () {
         'as' => 'admin.',
         'prefix' => 'admin'
     ], function () {
-        Route::get('/companies/list', [AdminCompanyController::class, 'list'])->name('companies.list');
-        Route::get('/companies/create', [AdminCompanyController::class, 'create'])->name('companies.create');
-        Route::get('/companies/{company}/edit', [AdminCompanyController::class, 'edit'])->name('companies.edit');
+        Route::controller(AdminCompanyController::class)->group(function() {
+            Route::patch('/companies/{company}/update-status', 'updateStatus')->name('companies.update_status');
+            Route::get('/companies/list', 'list')->name('companies.list');
+            Route::get('/companies/create', 'create')->name('companies.create');
+            Route::get('/companies/{company}/edit', 'edit')->name('companies.edit');
+        });
     });
 });
 

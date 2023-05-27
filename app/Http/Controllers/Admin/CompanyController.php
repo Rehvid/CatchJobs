@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Location;
 use App\Models\SocialNetwork;
+use App\Services\CompanyService;
 use Illuminate\View\View;
-
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Company\StatusUpdateRequest;
 
 class CompanyController extends Controller
 {
@@ -38,4 +40,13 @@ class CompanyController extends Controller
             'socialNetworks'
         ]));
     }
+
+    public function updateStatus(StatusUpdateRequest $request, Company $company, CompanyService $companyService): RedirectResponse
+    {
+        $companyService->transformValidatedCompanyDataToCollection($request->validated());
+        $companyService->updateCompany($company);
+
+        return redirect()->route('admin.companies.list')->with('success', __('company.success.update'));
+    }
+
 }
