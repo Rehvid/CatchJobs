@@ -17,6 +17,11 @@
 
 <body class="font-sans text-gray-900 antialiased bg-gray-100">
 @include('layouts.navigation')
+@if(session()->has('error'))
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center" role="alert">
+        {{session()->get('error')}}
+    </div>
+@endif
 <h1 class="mb-1 text-xl text-center font-medium text-gray-900 dark:text-white py-2">{{ __('global.page_in_progress') }}</h1>
 
 </body>
