@@ -5,8 +5,6 @@ import Tagify from '@yaireo/tagify'
 import "@yaireo/tagify/dist/tagify.css";
 import {createCKEditorForTextarea, deleteDataFromServer, getDataFromServer} from "./app";
 
-
-
 class Company {
     constructor() {
         this.init();
@@ -112,7 +110,11 @@ class Company {
                 const response =  await deleteDataFromServer(target.getAttribute('data-url'), data);
                 response.json().then(response => {
                     if (response.status) {
-                        target.closest('div').remove();
+                        const wrapperTarget = target.closest('div');
+                        target.hasAttribute('data-max-reached')
+                            ? this.toggleVisibilityInputsFields(wrapperTarget?.parentElement?.querySelector('input'))
+                            : '';
+                        wrapperTarget.remove();
                     }
                 })
             }
@@ -133,6 +135,12 @@ class Company {
                 }
             })
         })
+    }
+
+    toggleVisibilityInputsFields(input) {
+        if (input && input.classList.contains('input-file--hidden')) {
+            input.classList.remove('input-file--hidden');
+        }
     }
 }
 

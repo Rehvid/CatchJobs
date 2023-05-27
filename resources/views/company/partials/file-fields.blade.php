@@ -5,7 +5,6 @@
 </div>
 
 
-
 <div class="p-6 space-y-6 ">
     @if(isset($company) && $company->fileByCollection('logo'))
         <div class="relative max-w-[100px]">
@@ -17,19 +16,24 @@
                data-url="{{route('companies.destroy_image')}}"
                data-image-id="{{$company->fileByCollection('logo')->id}}"
                data-company-id="{{$company->id}}"
+               data-max-reached="true"
             >
             </a>
         </div>
     @endif
-    <x-input-label :value="__('company.logo.label')" for="logo" />
+    <x-input-label :value="__('company.logo.label')" for="logo"/>
     <x-text-input
         id="logo"
         type="file"
-        class="block mt-1 w-full"
+        class="{{isset($company) && $company->fileByCollection('logo') ? 'input-file input-file--hidden' : '' }}
+            block
+            mt-1
+            w-full
+            "
         name="image_logo"
         value="{{old('image_logo')}}"
     />
-    <x-input-error :messages="$errors->get('image_logo')" class="mt-1" />
+    <x-input-error :messages="$errors->get('image_logo')" class="mt-1"/>
 
 </div>
 
@@ -38,46 +42,47 @@
     @if(isset($company) && $company->fileByCollection('cover'))
         <div class="relative">
             <img
-                 class="w-full"
-                 src="{{ $company->fileByCollection('cover')->getPublicPath() }}"
-                 alt="cover"
+                class="w-full"
+                src="{{ $company->fileByCollection('cover')->getPublicPath() }}"
+                alt="cover"
             />
             <a class="js-remove-image"
                data-url="{{route('companies.destroy_image')}}"
                data-image-id="{{$company->fileByCollection('cover')->id}}"
                data-company-id="{{$company->id}}"
+               data-max-reached="true"
             >
             </a>
         </div>
     @endif
-    <x-input-label :value="__('company.cover.label')" for="cover" />
+    <x-input-label :value="__('company.cover.label')" for="cover"/>
     <x-text-input
         id="cover"
         type="file"
-        class="block mt-1 w-full"
+        class="block mt-1 w-full {{isset($company) && $company->fileByCollection('cover') ? 'input-file input-file--hidden' : '' }}"
         name="image_cover"
         value="{{old('image_cover')}}"
     />
-    <x-input-error :messages="$errors->get('image_cover')" class="mt-1" />
+    <x-input-error :messages="$errors->get('image_cover')" class="mt-1"/>
 </div>
 
 <div class="p-6 space-y-6 ">
     @if(isset($company) && !empty($company->getGalleryImages()))
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        @foreach($company->getGalleryImages() as $image)
-            <div class="relative">
-                <img class="h-auto max-w-full rounded-lg" src="{{$image->getPublicPath()}}" alt="gallery">
-                <a class="js-remove-image"
-                   data-url="{{route('companies.destroy_image')}}"
-                   data-image-id="{{$image->id}}"
-                   data-company-id="{{$company->id}}"
-                >
-                </a>
-            </div>
-        @endforeach
+            @foreach($company->getGalleryImages() as $image)
+                <div class="relative">
+                    <img class="h-auto max-w-full rounded-lg" src="{{$image->getPublicPath()}}" alt="gallery">
+                    <a class="js-remove-image"
+                       data-url="{{route('companies.destroy_image')}}"
+                       data-image-id="{{$image->id}}"
+                       data-company-id="{{$company->id}}"
+                    >
+                    </a>
+                </div>
+            @endforeach
         </div>
     @endif
-    <x-input-label :value="__('company.gallery.label')" for="gallery" />
+    <x-input-label :value="__('company.gallery.label')" for="gallery"/>
     <x-text-input
         multiple
         id="gallery"
@@ -86,5 +91,5 @@
         name="image_gallery[]"
         value="{{old('image_gallery')}}"
     />
-    <x-input-error :messages="$errors->get('image_gallery')" class="mt-1" />
+    <x-input-error :messages="$errors->get('image_gallery')" class="mt-1"/>
 </div>
