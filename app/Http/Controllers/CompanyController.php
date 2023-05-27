@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Company\CompanyRequest;
 use App\Http\Requests\Company\ImageDestroyRequest;
-use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use App\Models\File;
 use App\Models\Location;
@@ -12,7 +12,6 @@ use App\Models\SocialNetwork;
 use App\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 
@@ -67,7 +66,7 @@ class CompanyController extends Controller
         return view('company.show', compact('company'));
     }
 
-    public function edit(Company $company)
+    public function edit(Company $company): View
     {
         $this->authorize('update', $company);
 

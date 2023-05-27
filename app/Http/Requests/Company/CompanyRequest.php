@@ -1,16 +1,13 @@
 <?php
-namespace App\Http\Requests;
+namespace App\Http\Requests\Company;
 
 use App\Models\Company;
-use App\Models\Location;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use JsonException;
-use function PHPUnit\Framework\isNull;
 
 class CompanyRequest extends FormRequest
 {
