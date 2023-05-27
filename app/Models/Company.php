@@ -27,6 +27,7 @@ class Company extends Model
         'slug',
         'vat_number',
         'status',
+        'status_message',
         'description',
         'foundation_year',
         'employees'

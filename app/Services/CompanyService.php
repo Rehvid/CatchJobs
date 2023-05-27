@@ -140,7 +140,9 @@ class CompanyService
     private function putDataToCompanyCollection(): void
     {
         $this->companyCollection->put('user_id', Auth::user()->id);
-        $this->companyCollection->put('slug', Str::slug($this->companyCollection->get('name')));
+        if ($this->companyCollection->get('name')) {
+            $this->companyCollection->put('slug', Str::slug($this->companyCollection->get('name')));
+        }
         if (isset($this->company) && !$this->isSubmittedLocationEqualToCompanyLocation()) {
             $this->company->location_id = $this->companyCollection->get('location_id');
             $this->updateLocationForCompany();
