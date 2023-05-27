@@ -12,6 +12,7 @@ use App\Models\SocialNetwork;
 use App\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 
@@ -56,6 +57,10 @@ class CompanyController extends Controller
         $this->companyService->handleSocialsForCompany($company);
         $this->companyService->handleUploadedImagesForCompany($company);
 
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.companies.list')->with('success', __('company.success.store'));
+        }
+
         return redirect()->route('companies.list')->with('success', __('company.success.store'));
     }
 
@@ -91,6 +96,10 @@ class CompanyController extends Controller
         $this->companyService->handleSocialsForCompany($company);
         $this->companyService->handleUploadedImagesForCompany($company);
 
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.companies.list')->with('success', __('company.success.update'));
+        }
+
         return redirect()->route('companies.list')->with('success', __('company.success.update'));
     }
 
@@ -102,6 +111,10 @@ class CompanyController extends Controller
         $this->companyService->destroyFilesForCompany($company);
         $this->companyService->destroyBenefitsForCompany($company);
         $this->companyService->destroyCompany($company);
+
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.companies.list')->with('success', __('company.success.destroy'));
+        }
 
         return redirect()->route('companies.list')->with('success', __('company.success.destroy'));
     }
