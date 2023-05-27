@@ -19,9 +19,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::name('guests.')->group(function () {
-    Route::get('/', fn () => view('welcome'))->name('welcome');
-});
+
+Route::get('/', fn () => view('welcome'))->name('welcome');
+Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
@@ -40,7 +42,7 @@ Route::middleware('auth')->group(function () {
     // Company
     Route::get('/companies/list', [CompanyController::class, 'list'])->name('companies.list');
     Route::delete('/companies/destroy/image', [CompanyController::class, 'destroyImage'])->name('companies.destroy_image');
-    Route::resource('companies', CompanyController::class);
+    Route::resource('companies', CompanyController::class)->except(['index','show']);
 
     // Location
     Route::get('/location/{id}', [LocationController::class, 'get'])->name('locations.get');
