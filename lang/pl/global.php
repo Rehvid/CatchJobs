@@ -7,5 +7,7 @@ return [
         'accept' => 'Zaakceptowane'
     ],
     'actions' => 'Akcje',
-    'optional' => '(Opcjonalne)'
+    'optional' => '(Opcjonalne)',
+    'page_in_progress' => 'Aplikacja w trakcie budowy',
+    'admin_forbidden' => 'Nie masz uprawnień administratora!',
 ];

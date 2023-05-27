@@ -16,6 +16,6 @@ class Admin
             return $next($request);
         }
 
-        return redirect('/')->with('error', 'You have not admin access');
+        return redirect('/')->with('error', __('global.admin_forbidden'));
     }
 }

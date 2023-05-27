@@ -33,6 +33,7 @@
         name="image_logo"
         value="{{old('image_logo')}}"
     />
+        <span class="text-gray-500 text-sm my-2" >{{ __('company.logo.comment') }}</span>
     <x-input-error :messages="$errors->get('image_logo')" class="mt-1"/>
 
 </div>
@@ -63,6 +64,7 @@
         name="image_cover"
         value="{{old('image_cover')}}"
     />
+        <span class="text-gray-500 text-sm my-2">{{ __('company.cover.comment') }}</span>
     <x-input-error :messages="$errors->get('image_cover')" class="mt-1"/>
 </div>
 
@@ -91,5 +93,6 @@
         name="image_gallery[]"
         value="{{old('image_gallery')}}"
     />
+        <span class="text-gray-500 text-sm my-2">{{ __('company.gallery.comment') }}</span>
     <x-input-error :messages="$errors->get('image_gallery')" class="mt-1"/>
 </div>

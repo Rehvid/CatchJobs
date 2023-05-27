@@ -20,4 +20,7 @@ return [
     'already_register' => 'Posiadasz już konto?',
     'forget_password' => 'Zapomniałeś hasła?',
     'remember_me' => 'Zapamiętaj mnie',
+    'login_in' => 'Zaloguj mnie',
+    'register' => 'Zarejestruj się',
+    'email_password_reset_link' => 'Link do resetowania hasła'
 ];
