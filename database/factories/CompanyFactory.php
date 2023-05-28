@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\Status;
+use App\Models\Industry;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -18,18 +21,24 @@ class CompanyFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->name();
+        $name = $this->faker->unique->word;
+        $userId = random_int(1, User::all()->count());
+        $status = $this->faker->randomElement(Status::cases());
+
         return [
-            'user_id' => random_int(1, User::all()->count()),
-            'location_id' => null,
-            'industry_id' => null,
+            'user_id' => $userId,
+            'location_id' => Location::byUserId($userId)->first()->id ?? null,
+            'industry_id' => random_int(1, Industry::all()->count()),
             'name' => $name,
             'slug' => Str::slug($name),
-            'vat_number' => fake()->unique()->numerify('##########'),
-            'status' => random_int(0, 2),
-            'description' => fake()->unique()->paragraph(),
-            'employees' => fake()->randomNumber(),
-            'foundation_year' => fake()->year()
+            'vat_number' => $this->faker->unique->numerify('##########'),
+            'status' => $status->value,
+            'status_message' => $status === Status::REJECT
+                ? $this->faker->text
+                : null,
+            'description' => $this->faker->paragraph(6),
+            'employees' => $this->faker->randomNumber(4),
+            'foundation_year' => $this->faker->year
         ];
     }
 }
