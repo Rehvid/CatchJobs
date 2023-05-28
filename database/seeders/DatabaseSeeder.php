@@ -10,6 +10,7 @@ use App\Models\Location;
 use App\Models\Social;
 use App\Models\SocialNetwork;
 use App\Models\User;
+use Database\Factories\ImageFileFactory;
 use Database\Factories\SocialFactory;
 use Illuminate\Database\Seeder;
 
@@ -29,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory(20)->create();
         Location::factory(50)->create();
-        File::factory(50)->create();
+        ImageFileFactory::new()->count(50)->create();
 
         $files = File::all();
         $benefits = Benefit::all();

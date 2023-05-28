@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\File;
 use http\Message\Body;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
@@ -10,8 +11,10 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\File>
  */
-class FileFactory extends Factory
+class ImageFileFactory extends Factory
 {
+    protected $model = File::class;
+
     /**
      * Define the model's default state.
      *
