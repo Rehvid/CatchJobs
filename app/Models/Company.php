@@ -50,6 +50,11 @@ class Company extends Model
         return $query->where('user_id', Auth::user()->id);
     }
 
+    public function scopeAccepted(Builder $query): Builder
+    {
+        return $query->where('status', Status::ACCEPT->value);
+    }
+
     public function benefits(): BelongsToMany
     {
         return $this->belongsToMany(Benefit::class);
@@ -105,4 +110,5 @@ class Company extends Model
             ->get()
             ->filter(fn(?File $file) => $file->collection === 'gallery');
     }
+
 }
