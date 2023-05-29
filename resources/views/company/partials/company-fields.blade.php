@@ -51,14 +51,9 @@
     <x-input-label for="employees" :value="__('company.employees.label')" optional="true" />
     <input type="hidden" class="old_employees" value="{{old('employees', $company->employees ?? '')}}">
     <x-select name="employees" id="employees">
-        <option>1 - 5</option>
-        <option>5 - 10</option>
-        <option>10 - 25</option>
-        <option>25 - 50</option>
-        <option>50 - 100</option>
-        <option>100 - 200</option>
-        <option>200 - 500</option>
-        <option>500+</option>
+        @foreach (\App\Enums\Employees::cases() as $employee)
+            <option>{{ $employee->value }}</option>
+        @endforeach
     </x-select>
     <x-input-error :messages="$errors->get('employees')" class="mt-1" />
 </div>
