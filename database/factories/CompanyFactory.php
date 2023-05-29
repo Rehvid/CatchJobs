@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Employees;
 use App\Enums\Status;
 use App\Models\Industry;
 use App\Models\Location;
@@ -37,7 +38,7 @@ class CompanyFactory extends Factory
                 ? $this->faker->text
                 : null,
             'description' => $this->faker->paragraph(6),
-            'employees' => $this->faker->randomNumber(4),
+            'employees' => $this->faker->randomElement(Employees::cases())->value,
             'foundation_year' => $this->faker->year
         ];
     }

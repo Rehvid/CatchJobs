@@ -17,7 +17,7 @@ class IndustryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->name()
+            'name' => $this->faker->unique->name
         ];
     }
 }

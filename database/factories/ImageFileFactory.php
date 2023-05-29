@@ -48,13 +48,13 @@ class ImageFileFactory extends Factory
         );
 
         $path = $collection . '/' . $image;
-        $fullpath = storage_path('app/public/' . $collection . '/' . $image);
+        $fullPath = storage_path('app/public/' . $collection . '/' . $image);
 
         return [
             'name' => $image,
             'disk' =>  config('app.uploads.disk'),
             'path' => $path,
-            'mime_type' => getimagesize($fullpath)['mime'],
+            'mime_type' => getimagesize($fullPath)['mime'],
             'collection' => $collection,
         ];
     }

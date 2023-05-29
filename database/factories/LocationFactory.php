@@ -25,7 +25,7 @@ class LocationFactory extends Factory
             'province' => Str::ucfirst($this->faker->state),
             'city' => $this->faker->city,
             'street' => $this->faker->streetName,
-            'phone' => $this->faker->phoneNumber,
+            'phone' => $this->faker->unique->numerify('##########'),
             'email' => $this->faker->unique->email,
         ];
     }
