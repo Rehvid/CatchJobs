@@ -18,7 +18,7 @@ class CompanyRequest extends FormRequest
         }
 
         if ($this->routeIs('companies.update')) {
-            return $this->user()->can('update', Company::find($this->company_id));
+            return $this->user()->can('update', $this->company);
         }
 
         return false;
@@ -32,13 +32,13 @@ class CompanyRequest extends FormRequest
                 'string',
                 'min:2',
                 'max:255',
-                Rule::unique('companies', 'name')->ignore($this->company_id)
+                Rule::unique('companies', 'name')->ignore($this->route('company'), $this->id)
             ],
             'vat_number' => [
                 'required',
                 'string',
                 'size:10',
-                Rule::unique('companies', 'vat_number')->ignore($this->company_id)
+                Rule::unique('companies', 'vat_number')->ignore($this->route('company'), $this->id)
             ],
             'description' => ['nullable', 'string', 'max:1000'],
             'employees' => ['nullable', 'string'],
@@ -51,24 +51,22 @@ class CompanyRequest extends FormRequest
             'postcode' => ['sometimes', 'required', 'string', 'regex:/^[0-9]{2}-[0-9]{3}/', 'size:6'],
             'province' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
             'city' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
-            'street' => ['sometimes', 'required', 'string', 'min:2', 'max:255', 'regex:/^[a-zA-Z0-9\s\/-]+$/'],
+            'street' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
             'email' => [
                 'sometimes',
                 'required',
                 'email',
                 'min:2',
                 'max:255',
-                Rule::unique('locations', 'email')
-                    ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
+                Rule::unique('locations', 'email')->ignore($this->location_id)
             ],
             'phone' => [
                 'sometimes',
                 'required',
-                'numeric',
-                'min_digits:9',
-                'max_digits:15',
-                Rule::unique('locations','phone')
-                    ->where(fn ($query) => $query->whereNot('user_id', $this->user()->id))
+                'string',
+                'min:9',
+                'regex:/^([0-9\s\-\+\(\)]*)$/',
+                Rule::unique('locations','phone')->ignore($this->location_id)
             ],
             'facebook' => ['nullable',  'min:2', 'max:255', 'url'],
             'instagram' => ['nullable',  'min:2', 'max:255', 'url'],
