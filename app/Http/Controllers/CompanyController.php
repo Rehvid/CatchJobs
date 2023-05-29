@@ -23,7 +23,7 @@ class CompanyController extends Controller
 
     public function index(): View
     {
-        $companies = Company::with('benefits','socials', 'files')->paginate(16);
+        $companies = Company::with('benefits','socials', 'files')->accepted()->paginate(16);
 
         return view('company.index', compact('companies'));
     }
@@ -52,6 +52,7 @@ class CompanyController extends Controller
         $this->authorize('create', Company::class);
 
         $this->companyService->transformValidatedCompanyDataToCollection($request->validated());
+        $this->companyService->handleLocationForCompany();
         $company = $this->companyService->createCompany();
         $this->companyService->syncBenefitsForCompany($company);
         $this->companyService->handleSocialsForCompany($company);
@@ -91,6 +92,7 @@ class CompanyController extends Controller
         $this->authorize('update', $company);
 
         $this->companyService->transformValidatedCompanyDataToCollection($request->validated());
+        $this->companyService->handleLocationForCompany($company);
         $this->companyService->updateCompany($company);
         $this->companyService->syncBenefitsForCompany($company);
         $this->companyService->handleSocialsForCompany($company);
