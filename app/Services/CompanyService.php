@@ -9,6 +9,7 @@ use App\Models\File;
 use App\Models\Industry;
 use App\Models\Location;
 use App\Models\Social;
+use App\Enums\Status;
 use App\Models\SocialNetwork;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -28,7 +29,6 @@ class CompanyService
         $this->companyCollection = collect($companyData);
         $this->putDataToCompanyCollection();
 
-
         if ($this->companyCollection->get('benefits')) {
             $this->transformBenefitsForCompanyCollection();
         }
@@ -37,8 +37,18 @@ class CompanyService
             $this->transformIndustryForCompanyCollection();
         }
 
-        if ($this->companyCollection->get('location_id') === 0) {
+    }
+
+    public function handleLocationForCompany(?Company $company = null): void
+    {
+        $locationId = $this->companyCollection->get('location_id');
+
+        if ($locationId === 0) {
             $this->companyCollection->put('location_id', $this->createLocationForCompany()->id);
+        }
+
+        if ($company && $locationId) {
+            $this->updateLocationForCompany($locationId);
         }
 
     }
@@ -129,7 +139,7 @@ class CompanyService
 
     public function destroyBenefitsForCompany(Company $company): void
     {
-        $company->benefits?->each(fn (Benefit $benefit) => $benefit->delete());
+        $company->benefits()->detach();
     }
 
     public function destroyCompany(Company $company): void
@@ -143,16 +153,11 @@ class CompanyService
         if ($this->companyCollection->get('name')) {
             $this->companyCollection->put('slug', Str::slug($this->companyCollection->get('name')));
         }
-        if (isset($this->company) && !$this->isSubmittedLocationEqualToCompanyLocation()) {
-            $this->company->location_id = $this->companyCollection->get('location_id');
-            $this->updateLocationForCompany();
-        }
-    }
 
-    private function isSubmittedLocationEqualToCompanyLocation(): bool
-    {
-        return !is_null($this->company->location_id)
-            && $this->company->location_id === $this->companyCollection->get('location_id');
+        if (!$this->companyCollection->get('status')) {
+            $this->companyCollection->put('status', Status::PENDING->value);
+        }
+
     }
 
     private function transformBenefitsForCompanyCollection(): void
@@ -188,9 +193,9 @@ class CompanyService
         return Location::create($this->companyCollection->toArray());
     }
 
-    private function updateLocationForCompany(): void
+    private function updateLocationForCompany(int $locationId): void
     {
-        $this->company->location?->update($this->companyCollection->toArray());
+        Location::find($locationId)?->update($this->companyCollection->toArray());
     }
 
     private function deleteSocialForCompany(Social $social): bool|null
