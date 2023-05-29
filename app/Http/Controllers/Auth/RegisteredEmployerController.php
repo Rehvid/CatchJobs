@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\AuthRole;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\EmployerRequest;
 use App\Providers\RouteServiceProvider;
@@ -24,7 +24,7 @@ class RegisteredEmployerController extends Controller
     public function store(EmployerRequest $request, RegisterEmployerService $registerEmployerService): RedirectResponse
     {
         $user = $registerEmployerService->createUser($request->validated());
-        $employerRole = Role::findByName(AuthRole::EMPLOYER->value);
+        $employerRole = Role::findByName(UserRole::EMPLOYER->value);
         $registerEmployerService->createCompanyForEmployer($request->validated(), $user->id);
         $user->assignRole($employerRole);
 

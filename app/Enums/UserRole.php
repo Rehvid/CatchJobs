@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum AuthRole: String
+enum UserRole: String
 {
     case ADMIN = 'admin';
     case EMPLOYER = 'employer';

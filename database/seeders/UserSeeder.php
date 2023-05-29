@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\AuthRole;
+use App\Enums\UserRole;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,9 +17,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::findByName(AuthRole::ADMIN->value);
-        $employerRole = Role::findByName(AuthRole::EMPLOYER->value);
-        $userRole = Role::findByName(AuthRole::USER->value);
+        $adminRole = Role::findByName(UserRole::ADMIN->value);
+        $employerRole = Role::findByName(UserRole::EMPLOYER->value);
+        $userRole = Role::findByName(UserRole::USER->value);
 
         $admin = User::create([
             'name' => 'Admin admin',

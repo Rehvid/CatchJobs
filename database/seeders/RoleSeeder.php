@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\AuthRole;
+use App\Enums\UserRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -11,8 +11,8 @@ class RoleSeeder extends Seeder
 
     public function run(): void
     {
-        Role::create(['name' => AuthRole::ADMIN->value]);
-        Role::create(['name' => AuthRole::EMPLOYER->value]);
-        Role::create(['name' => AuthRole::USER->value]);
+        Role::create(['name' => UserRole::ADMIN->value]);
+        Role::create(['name' => UserRole::EMPLOYER->value]);
+        Role::create(['name' => UserRole::USER->value]);
     }
 }
