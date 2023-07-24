@@ -73,4 +73,4 @@ To Do:
 
 ## Project status
 
-Project is: in progress
+Project is: suspended
